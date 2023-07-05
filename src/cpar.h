@@ -132,6 +132,79 @@ enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result);
 } // extern "C"
 #endif
 
+#ifdef __cplusplus
+
+#include <cstdio>
+#include <stdexcept>
+#include <string>
+
+namespace cpar
+{
+
+  struct color {
+
+    class error : public std::runtime_error
+    {
+    public:
+      error(cpar_status code, const char *what)
+          : std::runtime_error{what},
+            m_code{code}
+      {
+      }
+
+      cpar_status code() const noexcept { return m_code; }
+
+    private:
+      cpar_status m_code;
+    };
+
+    uint32_t value;
+
+    color(uint32_t value) : value{value} {}
+
+    color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255)
+        : value{CPAR_COLOR_MAKE(r, g, b, a)}
+    {
+    }
+
+    color(std::string const &str) : value{0x000000ff}
+    {
+      if (cpar_status status = cpar_color_parse(str.c_str(), &value);
+          status != CPAR_STATUS_OK) {
+        throw error{status, cpar_strerror(status)};
+      }
+    }
+
+    operator uint32_t() const noexcept { return value; }
+
+    uint8_t red() const noexcept { return CPAR_COLOR_RED(value); }
+    uint8_t green() const noexcept { return CPAR_COLOR_GREEN(value); }
+    uint8_t blue() const noexcept { return CPAR_COLOR_BLUE(value); }
+    uint8_t alpha() const noexcept { return CPAR_COLOR_ALPHA(value); }
+
+    std::string to_string() const noexcept
+    {
+      char buf[10] = {0};
+      std::snprintf(buf,
+                    10,
+                    "#%02x%02x%02x%02x",
+                    red(),
+                    green(),
+                    blue(),
+                    alpha());
+      return buf;
+    }
+  };
+
+  inline std::string to_string(color const &c)
+  {
+    return c.to_string();
+  }
+
+} // namespace cpar
+
+#endif
+
 #endif // CPAR_H
 
 #ifdef CPAR_IMPLEMENTATION

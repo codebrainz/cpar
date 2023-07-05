@@ -1,8 +1,8 @@
 test: cpar-test
 	./cpar-test
 
-cpar-test: src/test.c src/cpar.h
-	$(CC) $(strip $(CPPFLAGS) $(CFLAGS) -g -O0 -o $@ $^ $(LDFLAGS))
+cpar-test: src/test.cpp src/cpar.h
+	$(CXX) $(strip $(CPPFLAGS) $(CXXFLAGS) -g -O0 -o $@ $^ $(LDFLAGS))
 
 clean:
 	$(RM) cpar-test
