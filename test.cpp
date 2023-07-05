@@ -56,13 +56,11 @@ int main()
       cpar::color exp = tests[i].clr;
 
       if (clr.value == tests[i].clr) {
-        std::cout << "pass: test " << i
-                  << " passed, expected=" << exp.to_string()
-                  << ", actual=" << clr.to_string() << std::endl;
+        std::cout << "pass: test " << i << " passed, expected=" << exp
+                  << ", actual=" << clr << std::endl;
       } else {
-        std::cout << "fail: test " << i
-                  << " failed, expected=" << exp.to_string()
-                  << ", actual=" << clr.to_string() << std::endl;
+        std::cout << "fail: test " << i << " failed, expected=" << exp
+                  << ", actual=" << clr << std::endl;
       }
 
     } catch (cpar::color::error const &e) {

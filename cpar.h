@@ -135,6 +135,7 @@ enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result);
 #ifdef __cplusplus
 
 #include <cstdio>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 
@@ -160,9 +161,12 @@ namespace cpar
 
     uint32_t value;
 
-    color(uint32_t value) : value{value} {}
+    constexpr color(uint32_t value) noexcept : value{value} {}
 
-    color(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255)
+    constexpr color(uint8_t r = 0,
+                    uint8_t g = 0,
+                    uint8_t b = 0,
+                    uint8_t a = 255) noexcept
         : value{CPAR_COLOR_MAKE(r, g, b, a)}
     {
     }
@@ -175,30 +179,41 @@ namespace cpar
       }
     }
 
-    operator uint32_t() const noexcept { return value; }
+    constexpr operator uint32_t() const noexcept { return value; }
 
-    uint8_t red() const noexcept { return CPAR_COLOR_RED(value); }
-    uint8_t green() const noexcept { return CPAR_COLOR_GREEN(value); }
-    uint8_t blue() const noexcept { return CPAR_COLOR_BLUE(value); }
-    uint8_t alpha() const noexcept { return CPAR_COLOR_ALPHA(value); }
-
-    std::string to_string() const noexcept
+    constexpr bool operator==(color const &other) const noexcept
     {
-      char buf[10] = {0};
-      std::snprintf(buf,
-                    10,
-                    "#%02x%02x%02x%02x",
-                    red(),
-                    green(),
-                    blue(),
-                    alpha());
-      return buf;
+      return value == other.value;
     }
+
+    constexpr bool operator!=(color const &other) const noexcept
+    {
+      return !operator==(other);
+    }
+
+    constexpr uint8_t red() const noexcept { return CPAR_COLOR_RED(value); }
+    constexpr uint8_t green() const noexcept { return CPAR_COLOR_GREEN(value); }
+    constexpr uint8_t blue() const noexcept { return CPAR_COLOR_BLUE(value); }
+    constexpr uint8_t alpha() const noexcept { return CPAR_COLOR_ALPHA(value); }
   };
 
   inline std::string to_string(color const &c)
   {
-    return c.to_string();
+    char buf[10] = {0};
+    std::snprintf(buf,
+                  10,
+                  "#%02x%02x%02x%02x",
+                  c.red(),
+                  c.green(),
+                  c.blue(),
+                  c.alpha());
+    return buf;
+  }
+
+  inline std::ostream &operator<<(std::ostream &out, color const &c)
+  {
+    out << to_string(c);
+    return out;
   }
 
 } // namespace cpar
