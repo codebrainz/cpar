@@ -19,6 +19,10 @@
 #ifndef CPAR_H
 #define CPAR_H 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 /**
@@ -123,6 +127,10 @@ enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result);
   (((uint32_t)(r) << 24) & 0xFF000000) |     \
       (((uint32_t)(g) << 16) & 0x00FF0000) | \
       (((uint32_t)(b) << 8) & 0x0000FF00) | ((uint32_t)(a)&0x000000FF)
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif // CPAR_H
 
