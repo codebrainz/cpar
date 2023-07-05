@@ -32,6 +32,16 @@ static const test_data tests[] = {
     {15, "rgb(100%,100%,100%)", 0xffffffff, CPAR_STATUS_OK},
     {16, "rgb(100%, 0, 0)", 0xff0000ff, CPAR_STATUS_OK},
     {17, "rgb(0, 50%,100 %)", 0x007fffff, CPAR_STATUS_OK},
+    {18, "rgb(256,256,256,1)", 0, CPAR_STATUS_NUMBER_RANGE},
+    {19, "rgba(1,2,3,1.2)", 0, CPAR_STATUS_NUMBER_RANGE},
+    {20, "#f", 0, CPAR_STATUS_SYNTAX_ERROR},
+    {21, "rgb(1, 2, hello)", 0, CPAR_STATUS_INVALID_NUMBER},
+    {22, "#aaZZbb", 0, CPAR_STATUS_INVALID_NUMBER},
+    {23,
+     "#fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     0,
+     CPAR_STATUS_TOO_BIG},
+    {24, "", 0, CPAR_STATUS_INVALID_PARAMETER},
 };
 
 static const size_t n_tests = sizeof(tests) / sizeof(tests[0]);
@@ -51,16 +61,18 @@ int main()
                   << ", actual=" << clr.to_string() << std::endl;
       } else {
         std::cout << "fail: test " << i
-                  << "failed, expected=" << exp.to_string()
+                  << " failed, expected=" << exp.to_string()
                   << ", actual=" << clr.to_string() << std::endl;
       }
 
     } catch (cpar::color::error const &e) {
       if (e.code() != tests[i].exp_status) {
-        std::cerr << "fail: unexpected color parse failure " << e.code()
+        std::cerr << "fail: test " << i
+                  << "failed, unexpected color parse failure " << e.code()
                   << " on test " << static_cast<int>(e.code()) << std::endl;
       } else {
-        std::cout << "pass: expected color parse failure on test "
+        std::cout << "pass: test " << i
+                  << " passed, expected color parse failure on test "
                   << static_cast<int>(e.code()) << std::endl;
       }
       continue;

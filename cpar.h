@@ -378,7 +378,7 @@ enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result)
   uint8_t r = 0, g = 0, b = 0, a = 255;
   enum cpar_status status = CPAR_STATUS_OK;
 
-  if (!color_str)
+  if (!color_str || !*color_str)
     return CPAR_STATUS_INVALID_PARAMETER;
 
   color_str_len = strlen(color_str);
@@ -416,6 +416,8 @@ enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result)
       gg[0] = *start++, gg[1] = *start++;
       bb[0] = *start++, bb[1] = *start++;
       aa[0] = *start++, aa[1] = *start++;
+    } else {
+      return CPAR_STATUS_SYNTAX_ERROR;
     }
 
     if ((status = cpar_hex_byte_to_int(rr, &r)) != CPAR_STATUS_OK ||
