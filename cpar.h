@@ -62,6 +62,15 @@ enum cpar_status {
 const char *cpar_strerror(enum cpar_status status);
 
 /**
+ * Lookup the name of a colour, if any.
+ *
+ * @param value The colour value.
+ * @returns The name of the colour, or @c NULL if no name was found for the
+ *          given colour value.
+ */
+const char *cpar_lookup_color_name(uint32_t value);
+
+/**
  * Parses a subset of CSS colours into a 32-bit integer.
  *
  * At present, the following colour syntaxes are supported and are all
@@ -561,7 +570,7 @@ static const struct cpar_color_name_info {
     {"yellowgreen", CPAR_COLOR_MAKE(154, 205, 50, 255)},
 };
 
-static const size_t cpar_n_cpar_color_name_table =
+static const size_t cpar_n_color_name_table =
     sizeof(cpar_color_name_table) / sizeof(cpar_color_name_table[0]);
 
 static int cpar_strcasecmp(const char *s1, const char *s2)
@@ -578,7 +587,8 @@ static int cpar_strcasecmp(const char *s1, const char *s2)
   return tolower(*s1) - tolower(*s2);
 }
 
-static int cpar_color_name_info_compare(const void *p1, const void *p2)
+static int cpar_color_name_info_compare_name_info(const void *p1,
+                                                  const void *p2)
 {
   return cpar_strcasecmp((const char *)p1,
                          ((const struct cpar_color_name_info *)p2)->name);
@@ -593,14 +603,33 @@ static enum cpar_status cpar_color_from_name(const char *color_str,
       (const struct cpar_color_name_info *)bsearch(
           color_str,
           cpar_color_name_table,
-          cpar_n_cpar_color_name_table,
+          cpar_n_color_name_table,
           sizeof(struct cpar_color_name_info),
-          cpar_color_name_info_compare);
+          cpar_color_name_info_compare_name_info);
   if (!info)
     return CPAR_STATUS_NO_COLOR_NAME;
   if (result)
     *result = info->value;
   return CPAR_STATUS_OK;
+}
+
+static int cpar_color_name_info_compare_value(const void *p1, const void *p2)
+{
+  return (long)p1 - ((const struct cpar_color_name_info *)p2)->value;
+}
+
+const char *cpar_lookup_color_name(uint32_t value)
+{
+  const struct cpar_color_name_info *info =
+      (const struct cpar_color_name_info *)bsearch(
+          (void *)((long)value),
+          cpar_color_name_table,
+          cpar_n_color_name_table,
+          sizeof(struct cpar_color_name_info),
+          cpar_color_name_info_compare_value);
+  if (!info)
+    return NULL;
+  return info->name;
 }
 
 enum cpar_status cpar_color_parse(const char *color_str, uint32_t *result)
