@@ -237,7 +237,6 @@ namespace cpar
 
 #endif // CPAR_H
 
-#ifdef CPAR_IMPLEMENTATION
 /**
  * When defined, includes the implementation code.
  *
@@ -246,7 +245,8 @@ namespace cpar
  * define this in one source file. If you get duplicate symbol errors, you
  * probably defined it before more than one include of the header.
  */
-#define CPAR_IMPLEMENTATION 1
+#ifdef CPAR_IMPLEMENTATION
+#undef CPAR_IMPLEMENTATION
 
 #include <assert.h>
 #include <ctype.h>
@@ -361,7 +361,7 @@ static enum cpar_status cpar_parse_component_a(char *str, uint8_t *out)
   errno = e;
 
   if (out)
-    *out = val / 255.0f;
+    *out = val * 255.0f;
 
   return CPAR_STATUS_OK;
 }
