@@ -42,6 +42,10 @@ static const test_data tests[] = {
      0,
      CPAR_STATUS_TOO_BIG},
     {24, "", 0, CPAR_STATUS_INVALID_PARAMETER},
+    {25, "red", 0xff0000ff, CPAR_STATUS_OK},
+    {26, "lightseagreen", 0x20b2aaff, CPAR_STATUS_OK},
+    {27, "MediumOrchid", 0xba55d3ff, CPAR_STATUS_OK},
+    {28, "fakeColour", 0, CPAR_STATUS_NO_COLOR_NAME},
 };
 
 static const size_t n_tests = sizeof(tests) / sizeof(tests[0]);
