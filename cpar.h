@@ -315,7 +315,6 @@ static enum cpar_status cpar_parse_component_rgb(char *str, uint8_t *out)
   int percent = 0;
   size_t str_len = strlen(str);
   char *ep = NULL;
-  int e = errno;
   long val = 0;
 
   if (str[str_len - 1] == '%') {
