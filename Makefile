@@ -1,7 +1,7 @@
-cxxflags := $(CPPFLAGS) $(CXXFLAGS) -g -O0 -std=c++17 -Wall -Wextra
+cxxflags := $(CPPFLAGS) -Isrc $(CXXFLAGS) -g -O0 -std=c++17 -Wall -Wextra
 ldflags := $(LDFLAGS)
 
-sources = catch_amalgamated.cpp test.cpp
+sources = tests/catch_amalgamated.cpp tests/test.cpp
 objects = $(sources:.cpp=.o)
 depends = $(sources:.cpp=.d)
 
@@ -13,7 +13,7 @@ test: $(objects)
 	$(CXX) $(strip $(cxxflags) -c -MMD -o $@ $<)
 
 clean:
-	$(RM) *.[do] test
+	$(RM) src/*.[do] test
 
 -include $(depends)
 
